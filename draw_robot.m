@@ -1,4 +1,4 @@
-function [] = draw_robot(qe)
+function [frame] = draw_robot(qe)
 % constants
 l = 0.5;
 r = 1.0;
@@ -33,7 +33,11 @@ G2 = P1 + r*e2/2;
 
 % bounds
 max_height = l+r;
-xbnds = max_height*[-1.2, 5.2];
+if P0(1) > 6.2*max_height
+    xbnds = max_height*[6.2, 12.4];
+else
+    xbnds = max_height*[-1.2, 6.2];
+end
 ybnds = max_height*[-0.2, 1.2];
 
 % Colors:
@@ -66,5 +70,8 @@ plot(G2(1), G2(2),'ko','MarkerSize',8,'LineWidth',2);
 axis([xbnds,ybnds]);
 axis equal;
 axis off;
+
+frame = getframe(gcf);
+drawnow
 
 end

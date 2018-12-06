@@ -1,4 +1,4 @@
-function [D_bar, V_bar] = change_coords(H, b)
+function [D_body, V_body] = change_coords(H, b)
     % variables
     q1 = sym('q1', 'real');
     q2 = sym('q2', 'real');
@@ -10,7 +10,8 @@ function [D_bar, V_bar] = change_coords(H, b)
     
     qs = [q1; q2; q3];
     
-    [D, C, G, B, V_tot, K_tot] = compute_swing_model();
+    load('+data/D.mat', 'D');
+    load('+data/potential_energy.mat', 'V_tot');
     q_bar = H*qs + b;
     D_bar = inv(jacobian(q_bar, qs))'*D*inv(jacobian(q_bar, qs));
     
@@ -20,6 +21,9 @@ function [D_bar, V_bar] = change_coords(H, b)
     qN = sym('qN', 'real');
     q_bar = [qb1; qb2; qN];
     q = H\(q_bar - b);
-    V_bar = subs(V_tot, [q1 q2 q3], q');
-    D_bar = subs(D_bar, [q1 q2 q3], q');
+    V_body = subs(V_tot, [q1 q2 q3], q');
+    D_body = subs(D_bar, [q1 q2 q3], q');
+    
+    save('+data/V_body.mat', 'V_body');
+    save('+data/D_body.mat', 'D_body');
 end

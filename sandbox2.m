@@ -1,7 +1,10 @@
-q0_minus = [pi/8, -pi/8, pi/6, 1.6, -1.6, 0]';
+import autogen_func.swing_model
+import autogen_func.impact_model
+
+q0_minus = [0.3927, -0.3926, 0.4965, 1.5570, -2.0085, -0.4396]';
 q0_plus = impact_model(q0_minus(1), q0_minus(2), q0_minus(3), q0_minus(4), q0_minus(5), q0_minus(6));
 
-load('hd.mat');
+load('+data/hd.mat');
 
 H = [1 0 -1; 0 1 -1; 1 0 0];
 b = [pi; pi; 0];
@@ -62,9 +65,10 @@ k2 = matlabFunction(k2);
 del_zero = double(subs(jacobian(K, dqN), [qb1, qb2, qN, dqb1, dqb2, dqN], q0_plus'))/double(subs(jacobian(K, dqN), [qb1, qb2, qN, dqb1, dqb2, dqN], q0_minus'));
 
 e1 = [];
+e2 = [];
 t = [];
 dt = 0.01;
-for i = 0:dt:5
+for i = 0:dt:10
     if epsilon1 >= pi/8
         epsilon1 = -pi/8;
         epsilon2 = del_zero*epsilon2;
@@ -74,5 +78,11 @@ for i = 0:dt:5
     epsilon2 = epsilon2 + k2(epsilon1)*dt;
     t = [t, i];
     e1 = [e1, epsilon1];
+    e2 = [e2, epsilon2];
 end
+figure(1);
 plot(t, e1);
+figure(2);
+plot(t, e2);
+e1(end)
+e2(end)

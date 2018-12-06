@@ -1,4 +1,4 @@
-function [x] = compute_impact_model()
+function [x] = compute_friction()
 % constants
 l = sym('0.5');
 r = sym('1.0');
@@ -83,15 +83,14 @@ dL_dqdot = simplify(jacobian(L, qedot))';
 eqn = simplify([jacobian(dL_dqdot, qe), jacobian(dL_dqdot, qedot)]*[qedot;qeddot]);
 eqn = simplify(eqn - dL_dq');
 [De, ~] = equationsToMatrix(eqn, [ddq1, ddq2, ddq3, ddp0h, ddp0v]);
-
-E2 = simplify(jacobian(P2, qe));
-del_F2 = -(E2*(De\E2'))\E2*[eye(3);zeros(2,3)];
-del_qedot = De\E2'*del_F2 + [eye(3);zeros(2,3)];
-
-qs = [q1; q2 ;q3];
-qsdot = [dq1; dq2; dq3];
-
-del_qs = [0 1 0; 1 0 0; 0 0 1];
-del_qsdot = collect(simplify([del_qs, zeros(3,2)]*del_qedot), [dq1, dq2, dq3]);
-x = [del_qs*qs; del_qsdot*qsdot];
-matlabFunction(x, 'File', '+autogen_func/impact_model', 'vars', [q1 q2 q3 dq1 dq2 dq3]);
+Ge = simplify(jacobian(V_tot, qe))';
+Ce = sym(zeros(size(De,1), size(De,2)));
+for k = 1:size(De,1)
+    for j = 1:size(De,2)
+        for i = 1:size(De,1)
+            Ce(k,j) = Ce(k, j) + 0.5*(diff(De(k,j),qe(i)) + diff(De(k,i), qe(j)) - diff(De(i,j), qe(k)))*qedot(i);
+        end
+    end
+end
+Be = jacobian([q3 - q1; q3 - q2], qe)';
+end

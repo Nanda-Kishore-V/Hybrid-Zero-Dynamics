@@ -35,7 +35,7 @@ function [] = record_data()
     poly1 = polyfit(th, q1, 7);
     poly2 = polyfit(th, q2, 7);
     hd = [poly1; poly2];
-    save('hd.mat', 'hd');
+    save('+data/hd.mat', 'hd');
     figure(1);
     plot(th, polyval(hd(1, :), th));
     hold on;
